@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HomeMoneyParser": {
+      "commandName": "Project",
+      "commandLineArgs": "parse-exp2 -f \"C:\\Users\\l.ustimova\\Desktop\\export.csv\""
+    }
+  }
+}
