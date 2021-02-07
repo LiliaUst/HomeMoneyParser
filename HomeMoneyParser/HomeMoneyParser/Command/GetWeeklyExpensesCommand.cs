@@ -17,6 +17,12 @@ namespace HomeMoneyParser.Command
 		[Option('d', "Date", Required = false, HelpText = "Input date in week.")]
 		public DateTime? Date { get; set; }
 
+		[Option('s', "DateFrom", Required = false, HelpText = "Date from.")]
+		public DateTime? DateFrom { get; set; }
+
+		[Option('t', "DateTo", Required = false, HelpText = "Date to.")]
+		public DateTime? DateTo { get; set; }
+
 		[Option('w', "WeekNumber", Required = false, HelpText = "Input week number of the year.")]
 		public int? WeekNumber { get; set; }
 
@@ -46,10 +52,20 @@ namespace HomeMoneyParser.Command
 
 		public override int Execute(GetWeeklyExpensesOptions options) {
 			var csvParser = new CsvParserWrapper();
-
 			var records = csvParser.Parse<Record>(options.FilePath);
-			var monday = GetMonday(options);
-			var expenses = GetExpenses(GetWeekRecords(records, monday));
+			IList<Record> recordsInDate = null;
+			int? weekNumber = null;
+			DateTime dateFrom = DateTime.Today, dateTo = DateTime.Today;
+			if (options.DateFrom.HasValue) {
+				dateFrom = options.DateFrom.Value;
+				dateTo = options.DateTo.HasValue ? options.DateTo.Value : DateTime.Today;
+				recordsInDate = records.Where(x => x.Date >= dateFrom && x.Date <= dateTo).ToList();
+			} else {
+				DateTime monday = GetMonday(options);
+				recordsInDate = GetWeekRecords(records, monday);
+				weekNumber = GetWeekNumber(monday);
+			}
+			IList<Record> expenses = GetExpenses(recordsInDate);
 
 			ExpenseCategoryList.Default.Categories.ForEach(category => {
 				var total = expenses.Where(x => x.Category == category.Name).Select(x => x.Total).Sum();
@@ -59,9 +75,13 @@ namespace HomeMoneyParser.Command
 				});
 				category.Amount = Math.Abs(total) + category.ChildCategories.Sum(x => x.Amount);
 			});
-			var weekNumber = GetWeekNumber(monday);
 
-			Console.WriteLine($"Week number:\t{weekNumber}");
+			if (weekNumber.HasValue) {
+				Console.WriteLine($"Week number:\t{weekNumber}");
+			} else {
+				Console.WriteLine($"Date from:\t{dateFrom}, date to:\t{dateTo}");
+			}
+
 			Console.WriteLine($"Categories:");
 			ExpenseCategoryList.Default.Categories.ForEach(category => {
 				Console.WriteLine($"{GetPrintCategoryName(category.Name, options)}{GetPrintAmount(category.Amount)}");

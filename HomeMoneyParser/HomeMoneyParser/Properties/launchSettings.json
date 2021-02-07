@@ -2,7 +2,7 @@
   "profiles": {
     "HomeMoneyParser": {
       "commandName": "Project",
-      "commandLineArgs": "parse-exp2 -f \"C:\\Users\\l.ustimova\\Desktop\\export.csv\""
+      "commandLineArgs": "parse-exp2 -f \"C:\\Users\\l.ustimova\\Desktop\\export.csv\" -s 02.01.2021 -t 02.04.2021 -c True"
     }
   }
 }
