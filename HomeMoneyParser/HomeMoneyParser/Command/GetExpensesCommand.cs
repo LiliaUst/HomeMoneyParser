@@ -1,30 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Text;
 using CommandLine;
-using HomeMoneyParser.Csv;
 
 namespace HomeMoneyParser.Command
 {
-
-	[Verb("get-week-exp", HelpText = "Get weekly expenses")]
-	internal class GetWeeklyExpensesOptions
+	[Verb("get-exp", HelpText = "Get expenses by specified dates")]
+	internal class GetExpensesOptions
 	{
 		[Option('f', "FilePath", Required = true, HelpText = "Input file path.")]
 		public string FilePath { get; set; }
 
-		[Option('d', "Date", Required = false, HelpText = "Input date in week.")]
+		[Option('d', "Date", Required = false, HelpText = "Date.")]
 		public DateTime? Date { get; set; }
 
-		[Option('w', "WeekNumber", Required = false, HelpText = "Input week number of the year.")]
-		public int? WeekNumber { get; set; }
+		[Option('t', "DateTo", Required = false, HelpText = "Date to.")]
+		public DateTime? DateTo { get; set; }
 
 		[Option('c', "ShowCategoryName", Default = false, Required = false, HelpText = "Show category name.")]
 		public bool ShowCategoryName { get; set; }
 	}
 
-	internal class GetWeeklyExpensesCommand : Command<GetWeeklyExpensesOptions>
+	internal class GetExpensesCommand : Command<GetExpensesOptions>
 	{
 		private IList<Record> GetWeekRecords(IList<Record> records, DateTime monday) {
 			var sunday = monday.AddDays(7);
@@ -78,4 +76,5 @@ namespace HomeMoneyParser.Command
 		private decimal GetPrintAmount(decimal amount) =>
 			decimal.Round(amount);
 	}
+
 }

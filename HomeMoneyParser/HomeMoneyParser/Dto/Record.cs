@@ -9,7 +9,7 @@ namespace HomeMoneyParser
 	internal class Record
 	{
 		[Name("date")]
-		[Format("dd.mm.yyyy")]
+		[Format("dd.MM.yyyy")]
 		public DateTime Date { get; set; }
 		[Name("account")]
 		public string Account { get; set; }
